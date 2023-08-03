@@ -17,10 +17,10 @@ pub struct QuadTree {
     capacity: usize,
     points: Vec<Point>,
 
-    tl: Option<Box<QuadTree>>,
-    tr: Option<Box<QuadTree>>,
-    bl: Option<Box<QuadTree>>,
-    br: Option<Box<QuadTree>>,
+    northwest: Option<Box<QuadTree>>,
+    northeast: Option<Box<QuadTree>>,
+    southwest: Option<Box<QuadTree>>,
+    southeast: Option<Box<QuadTree>>,
 }
 
 impl QuadTree {
@@ -29,10 +29,10 @@ impl QuadTree {
             boundary,
             capacity,
             points: Vec::new(),
-            tl: None,
-            tr: None,
-            bl: None,
-            br: None,
+            northwest: None,
+            northeast: None,
+            southwest: None,
+            southeast: None,
         }
     }
 
@@ -49,16 +49,16 @@ impl QuadTree {
             }
         }
 
-        if let Some(v) = &self.tl {
+        if let Some(v) = &self.northwest {
             res.extend(v.query(range));
         }
-        if let Some(v) = &self.tr {
+        if let Some(v) = &self.northeast {
             res.extend(v.query(range));
         }
-        if let Some(v) = &self.bl {
+        if let Some(v) = &self.southwest {
             res.extend(v.query(range));
         }
-        if let Some(v) = &self.br {
+        if let Some(v) = &self.southeast {
             res.extend(v.query(range));
         }
 
@@ -68,26 +68,26 @@ impl QuadTree {
     pub fn display(&self) {
         println!("vals: {:?}", self.points.clone());
 
-        if let Some(v) = &self.tl {
-            println!("tl");
+        if let println(v) = &self.northwest {
+            prinnorthwestn!("northwest");
             v.display();
         }
-        if let Some(v) = &self.tr {
-            println!("tr");
+        if let Some(v) = &self.northeast {
+            println!("northeast");
             v.display();
         }
-        if let Some(v) = &self.bl {
-            println!("bl");
+        if let Some(v) = &self.southwest {
+            println!("southwest");
             v.display();
         }
-        if let Some(v) = &self.br {
-            println!("br");
+        if let Some(v) = &self.southeast {
+            println!("southeast");
             v.display();
         }
     }
 
     pub fn subdivide(&mut self) {
-        if self.tl.is_some() {
+        if self.northwest.is_some() {
             return;
         }
 
@@ -96,14 +96,14 @@ impl QuadTree {
         let w = self.boundary.w;
         let h = self.boundary.h;
 
-        let tl_rect = Rectangle::new(x - w / 2.0, y - h / 2.0, w / 2.0, h / 2.0);
-        self.tl = Some(Box::new(QuadTree::new(tl_rect, self.capacity)));
-        let tr_rect = Rectangle::new(x + w / 2.0, y - h / 2.0, w / 2.0, h / 2.0);
-        self.tr = Some(Box::new(QuadTree::new(tr_rect, self.capacity)));
-        let bl_rect = Rectangle::new(x + w / 2.0, y + h / 2.0, w / 2.0, h / 2.0);
-        self.bl = Some(Box::new(QuadTree::new(bl_rect, self.capacity)));
-        let br_rect = Rectangle::new(x - w / 2.0, y + h / 2.0, w / 2.0, h / 2.0);
-        self.br = Some(Box::new(QuadTree::new(br_rect, self.capacity)));
+        let northwest_rect = Rectangle::new(x - w / 2.0, y - h / 2.0, w / 2.0, h / 2.0);
+        self.northwest = Some(Box::new(QuadTree::new(northwest_rect, self.capacity)));
+        let northeast_rect = Rectangle::new(x + w / 2.0, y - h / 2.0, w / 2.0, h / 2.0);
+        self.northeast = Some(Box::new(QuadTree::new(northeast_rect, self.capacity)));
+        let southwest_rect = Rectangle::new(x + w / 2.0, y + h / 2.0, w / 2.0, h / 2.0);
+        self.southwest = Some(Box::new(QuadTree::new(southwest_rect, self.capacity)));
+        let southeast_rect = Rectangle::new(x - w / 2.0, y + h / 2.0, w / 2.0, h / 2.0);
+        self.southeast = Some(Box::new(QuadTree::new(southeast_rect, self.capacity)));
     }
 
     pub fn insert(&mut self, point: &Point) -> bool {
@@ -118,22 +118,22 @@ impl QuadTree {
 
         self.subdivide();
 
-        if let Some(v) = &mut self.tl {
+        if let Some(v) = &mut self.northwest {
             if v.insert(&point) {
                 return true;
             }
         }
-        if let Some(v) = &mut self.tr {
+        if let Some(v) = &mut self.northeast {
             if v.insert(&point) {
                 return true;
             }
         }
-        if let Some(v) = &mut self.bl {
+        if let Some(v) = &mut self.southwest {
             if v.insert(&point) {
                 return true;
             }
         }
-        if let Some(v) = &mut self.br {
+        if let Some(v) = &mut self.southeast {
             if v.insert(&point) {
                 return true;
             }
