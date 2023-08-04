@@ -219,6 +219,8 @@ fn check_home_food_collisions(
         With<Ant>,
     >,
     asset_server: Res<AssetServer>,
+    mut resources: ResMut<Resources>,
+    mut pheromones: ResMut<Pheromones>,
 ) {
     for (transform, mut velocity, mut ant_task, mut ph_strength, mut image_handle) in
         ant_query.iter_mut()
@@ -242,23 +244,25 @@ fn check_home_food_collisions(
         }
 
         // Food Collision
-        let dist_to_food =
-            transform
-                .translation
-                .distance(vec3(FOOD_LOCATION.0, FOOD_LOCATION.1, 0.0));
-        if dist_to_food < FOOD_PICKUP_RADIUS {
-            // rebound only the ants with food
-            match ant_task.0 {
-                AntTask::FindFood => {
-                    velocity.0 *= -1.0;
+        for food in resources.foods.iter_mut() {
+            let dist_to_food = transform.translation.distance(vec3(food.x, food.y, 0.0));
+
+            if dist_to_food < FOOD_PICKUP_RADIUS {
+                // rebound only the ants with food
+                match ant_task.0 {
+                    AntTask::FindFood => {
+                        velocity.0 *= -1.0;
+                        food.reduce_food();
+                    }
+                    AntTask::FindHome => {}
                 }
-                AntTask::FindHome => {}
+                ant_task.0 = AntTask::FindHome;
+                ph_strength.0 = ANT_INITIAL_PH_STRENGTH;
+                *image_handle = asset_server.load(SPRITE_ANT_WITH_FOOD);
             }
-            ant_task.0 = AntTask::FindHome;
-            ph_strength.0 = ANT_INITIAL_PH_STRENGTH;
-            *image_handle = asset_server.load(SPRITE_ANT_WITH_FOOD);
         }
     }
+    resources.remove_food(pheromones);
 }
 
 fn check_wall_collision(

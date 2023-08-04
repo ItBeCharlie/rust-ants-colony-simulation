@@ -43,8 +43,8 @@ pub const PH_GRID_OPACITY: u8 = 255;
 
 // Food
 // pub const FOOD_LOCATION: (f32, f32) = (-400.0, 300.0);
-pub const FOOD_LOCATION: (f32, f32) = (-750.0, 400.0);
-pub const FOOD_LIMIT: u32 = 1500;
+pub const FOOD_LOCATIONS: &[(f32, f32)] = &[(-750.0, 400.0), (100.0, 100.0)];
+pub const INITIAL_FOOD_CAPACITY: i32 = 1500;
 pub const FOOD_PICKUP_RADIUS: f32 = 30.0;
 pub const FOOD_SPRITE_SCALE: f32 = 2.0;
 

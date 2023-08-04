@@ -2,13 +2,13 @@ use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     math::vec3,
     prelude::*,
-    window::WindowMode,
 };
 
 use ants::{
     ant::{AntFollowCameraPos, AntPlugin},
     gui::{GuiPlugin, SimSettings},
     pheromone::PheromonePlugin,
+    resource::ResourcePlugin,
     *,
 };
 use bevy_pancam::{PanCam, PanCamPlugin};
@@ -49,6 +49,7 @@ fn main() {
         // Internal Plugins
         .add_plugins(AntPlugin)
         .add_plugins(PheromonePlugin)
+        .add_plugins(ResourcePlugin)
         .add_plugins(GuiPlugin)
         .run();
 }
@@ -80,10 +81,12 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 
     // Food sprite
-    commands.spawn(SpriteBundle {
-        texture: asset_server.load(SPRITE_FOOD),
-        transform: Transform::from_xyz(FOOD_LOCATION.0, FOOD_LOCATION.1, 2.0)
-            .with_scale(Vec3::splat(FOOD_SPRITE_SCALE)),
-        ..Default::default()
-    });
+    // for &food_location in FOOD_LOCATIONS {
+    //     commands.spawn(SpriteBundle {
+    //         texture: asset_server.load(SPRITE_FOOD),
+    //         transform: Transform::from_xyz(food_location.0, food_location.1, 2.0)
+    //             .with_scale(Vec3::splat(FOOD_SPRITE_SCALE)),
+    //         ..Default::default()
+    //     });
+    // }
 }

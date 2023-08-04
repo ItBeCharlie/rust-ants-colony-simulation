@@ -3,7 +3,9 @@ pub mod configs;
 pub mod gui;
 pub mod pheromone;
 pub mod quadtree;
+pub mod resource;
 pub mod utils;
 
 pub use configs::*;
 pub use pheromone::Pheromones;
+pub use resource::Resources;

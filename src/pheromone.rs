@@ -178,7 +178,6 @@ impl Pheromones {
         let mut to_home_map = HashMap::new();
 
         // Food and Home have high pheromone strength
-        to_food_map.insert((FOOD_LOCATION.0 as i32, FOOD_LOCATION.1 as i32), 100000.0);
         to_home_map.insert((HOME_LOCATION.0 as i32, HOME_LOCATION.1 as i32), 100000.0);
 
         let boundary = Rectangle::new(-W / 2.0, H / 2.0, W, H);
@@ -194,6 +193,12 @@ impl Pheromones {
             qt_home: QuadTree::new(boundary.clone(), QT_HOME_CAPACITY),
             qt_food: QuadTree::new(boundary.clone(), QT_FOOD_CAPACITY),
         }
+    }
+
+    pub fn set_food_pheromone(&mut self, loc: Vec2, strength: f32) {
+        self.to_food
+            .strength
+            .insert((loc.x as i32, loc.y as i32), strength);
     }
 
     pub fn get_pheromone_points(
