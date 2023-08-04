@@ -156,29 +156,22 @@ fn calc_weighted_midpoint(points: &Vec<(i32, i32, f32)>) -> Vec2 {
 
 fn periodic_direction_update(
     mut ant_query: Query<(&mut Acceleration, &Transform, &CurrentTask, &Velocity), With<Ant>>,
-    pheromones: Res<Pheromones>,
+    mut pheromones: ResMut<Pheromones>,
     scan_radius: Res<AntScanRadius>,
 ) {
+    pheromones.update_qt();
     for (mut acceleration, transform, current_task, velocity) in ant_query.iter_mut() {
         let surrounding_ph;
         let current_pos = transform.translation;
 
         match current_task.0 {
             AntTask::FindFood => {
-                surrounding_ph = Some(
-                    pheromones
-                        .to_food
-                        .get_ph_in_range(&current_pos, scan_radius.0),
-                );
-                // surrounding_ph = Some(pheromones.get_pheromone_points(&current_pos, false));
+                surrounding_ph =
+                    Some(pheromones.get_pheromone_points(&current_pos, false, scan_radius.0));
             }
             AntTask::FindHome => {
-                surrounding_ph = Some(
-                    pheromones
-                        .to_home
-                        .get_ph_in_range(&current_pos, scan_radius.0),
-                );
-                // surrounding_ph = Some(pheromones.get_pheromone_points(&current_pos, true));
+                surrounding_ph =
+                    Some(pheromones.get_pheromone_points(&current_pos, true, scan_radius.0));
             }
         }
 

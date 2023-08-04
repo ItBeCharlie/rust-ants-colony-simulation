@@ -43,19 +43,6 @@ impl PheromoneGrid {
             }
         }
     }
-
-    pub fn get_ph_in_range(&self, pos: &Vec3, radius: f32) -> Vec<(i32, i32, f32)> {
-        let mut ph_items = Vec::new();
-        for (k, v) in self.strength.iter() {
-            let dist = pos.distance(vec3(k.0 as f32, k.1 as f32, 0.0));
-            if dist < radius {
-                ph_items.push((k.0, k.1, *v));
-            }
-        }
-
-        ph_items
-    }
-
     pub fn decay(&mut self) {
         for (_, v) in self.strength.iter_mut() {
             *v -= PHEROMONE_DECAY_RATE;
@@ -197,14 +184,14 @@ impl Pheromones {
         }
     }
 
-    pub fn get_pheromone_points(&self, pos: &Vec3, is_home: bool) -> Vec<(i32, i32, f32)> {
+    pub fn get_pheromone_points(
+        &self,
+        pos: &Vec3,
+        is_home: bool,
+        radius: f32,
+    ) -> Vec<(i32, i32, f32)> {
         let mut ph_items = Vec::new();
-        let range = Rectangle::new(
-            pos.x,
-            pos.y,
-            INITIAL_ANT_PH_SCAN_RADIUS,
-            INITIAL_ANT_PH_SCAN_RADIUS,
-        );
+        let range = Rectangle::new(pos.x, pos.y, radius, radius);
 
         if is_home {
             let surrounding_points = self.qt_home.query(&range);
@@ -243,10 +230,5 @@ impl Pheromones {
         self.qt_food = new_qt_food;
 
         let boundary = Rectangle::new(-W / 2.0, H / 2.0, W, H);
-        println!("home qt: {:?}", self.qt_home.query(&boundary).len());
-        println!("food qt: {:?}", self.qt_food.query(&boundary).len());
-
-        // self.qt_food.display();
-        // println!("food ph: {:?}", self.to_food.strength);
     }
 }

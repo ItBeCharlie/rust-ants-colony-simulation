@@ -68,8 +68,8 @@ impl QuadTree {
     pub fn display(&self) {
         println!("vals: {:?}", self.points.clone());
 
-        if let println(v) = &self.northwest {
-            prinnorthwestn!("northwest");
+        if let Some(v) = &self.northwest {
+            println!("northwest");
             v.display();
         }
         if let Some(v) = &self.northeast {
@@ -100,9 +100,9 @@ impl QuadTree {
         self.northwest = Some(Box::new(QuadTree::new(northwest_rect, self.capacity)));
         let northeast_rect = Rectangle::new(x + w / 2.0, y - h / 2.0, w / 2.0, h / 2.0);
         self.northeast = Some(Box::new(QuadTree::new(northeast_rect, self.capacity)));
-        let southwest_rect = Rectangle::new(x + w / 2.0, y + h / 2.0, w / 2.0, h / 2.0);
+        let southwest_rect = Rectangle::new(x - w / 2.0, y + h / 2.0, w / 2.0, h / 2.0);
         self.southwest = Some(Box::new(QuadTree::new(southwest_rect, self.capacity)));
-        let southeast_rect = Rectangle::new(x - w / 2.0, y + h / 2.0, w / 2.0, h / 2.0);
+        let southeast_rect = Rectangle::new(x + w / 2.0, y + h / 2.0, w / 2.0, h / 2.0);
         self.southeast = Some(Box::new(QuadTree::new(southeast_rect, self.capacity)));
     }
 
