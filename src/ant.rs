@@ -166,12 +166,28 @@ fn periodic_direction_update(
 
         match current_task.0 {
             AntTask::FindFood => {
-                surrounding_ph =
-                    Some(pheromones.get_pheromone_points(&current_pos, false, scan_radius.0));
+                // surrounding_ph = Some(
+                //     pheromones
+                //         .to_food
+                //         .get_ph_in_range(&current_pos, scan_radius.0),
+                // );
+                surrounding_ph = Some(pheromones.get_pheromone_points(
+                    &current_pos,
+                    false,
+                    INITIAL_ANT_PH_SCAN_RADIUS,
+                ));
             }
             AntTask::FindHome => {
-                surrounding_ph =
-                    Some(pheromones.get_pheromone_points(&current_pos, true, scan_radius.0));
+                // surrounding_ph = Some(
+                //     pheromones
+                //         .to_home
+                //         .get_ph_in_range(&current_pos, scan_radius.0),
+                // );
+                surrounding_ph = Some(pheromones.get_pheromone_points(
+                    &current_pos,
+                    true,
+                    INITIAL_ANT_PH_SCAN_RADIUS,
+                ));
             }
         }
 

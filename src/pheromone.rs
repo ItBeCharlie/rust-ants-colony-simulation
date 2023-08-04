@@ -9,7 +9,7 @@ use bevy::{
 
 use crate::{
     gui::SimSettings,
-    quadtree::{Point, QuadTree, Rectangle},
+    quadtree::{Circle, Point, QuadTree, Rectangle},
     utils::window_to_grid,
     *,
 };
@@ -43,11 +43,23 @@ impl PheromoneGrid {
             }
         }
     }
+    pub fn get_ph_in_range(&self, pos: &Vec3, radius: f32) -> Vec<(i32, i32, f32)> {
+        let mut ph_items = Vec::new();
+        for (k, v) in self.strength.iter() {
+            let dist = pos.distance(vec3(k.0 as f32, k.1 as f32, 0.0));
+            if dist < radius {
+                ph_items.push((k.0, k.1, *v));
+            }
+        }
+
+        ph_items
+    }
     pub fn decay(&mut self) {
         for (_, v) in self.strength.iter_mut() {
-            *v -= PHEROMONE_DECAY_RATE;
+            // *v *= 1.0 - PHEROMONE_EXPONENTIAL_DECAY_RATE;
+            *v -= PHEROMONE_CONSTANT_DECAY_RATE;
         }
-        self.strength.retain(|_, v| *v > 0.0);
+        self.strength.retain(|_, v| *v > 0.01);
     }
 
     pub fn get_strength(&self) -> &HashMap<(i32, i32), f32> {
@@ -179,8 +191,8 @@ impl Pheromones {
                 strength: to_home_map,
                 color: (PH_COLOR_TO_HOME.0, PH_COLOR_TO_HOME.1, PH_COLOR_TO_HOME.2),
             },
-            qt_home: QuadTree::new(boundary.clone(), 4),
-            qt_food: QuadTree::new(boundary.clone(), 4),
+            qt_home: QuadTree::new(boundary.clone(), QT_HOME_CAPACITY),
+            qt_food: QuadTree::new(boundary.clone(), QT_FOOD_CAPACITY),
         }
     }
 
@@ -191,7 +203,7 @@ impl Pheromones {
         radius: f32,
     ) -> Vec<(i32, i32, f32)> {
         let mut ph_items = Vec::new();
-        let range = Rectangle::new(pos.x, pos.y, radius, radius);
+        let range = Circle::new(pos.x, pos.y, radius);
 
         if is_home {
             let surrounding_points = self.qt_home.query(&range);
@@ -214,8 +226,8 @@ impl Pheromones {
 
     pub fn update_qt(&mut self) {
         let boundary = Rectangle::new(-W / 2.0, H / 2.0, W, H);
-        let mut new_qt_home = QuadTree::new(boundary.clone(), 4);
-        let mut new_qt_food = QuadTree::new(boundary.clone(), 4);
+        let mut new_qt_home = QuadTree::new(boundary.clone(), QT_HOME_CAPACITY);
+        let mut new_qt_food = QuadTree::new(boundary.clone(), QT_FOOD_CAPACITY);
 
         for (k, _) in self.to_home.strength.iter() {
             let point = Point::new(k.0 as f32, k.1 as f32);
@@ -230,5 +242,8 @@ impl Pheromones {
         self.qt_food = new_qt_food;
 
         let boundary = Rectangle::new(-W / 2.0, H / 2.0, W, H);
+
+        println!("home qt: {:?}", self.qt_home.query(&boundary).len());
+        println!("food qt: {:?}", self.qt_food.query(&boundary).len());
     }
 }

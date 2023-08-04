@@ -192,6 +192,7 @@ dependencies = [
  "bevy",
  "bevy_egui",
  "bevy_pancam",
+ "bevy_screen_diags",
  "rand",
 ]
 
@@ -877,6 +878,15 @@ dependencies = [
  "serde",
  "thiserror",
  "uuid",
+]
+
+[[package]]
+name = "bevy_screen_diags"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3f146faa1b5a64031e7be98cfbcb7c832adbbcc6808f058cee4b1a98814b7d2"
+dependencies = [
+ "bevy",
 ]
 
 [[package]]

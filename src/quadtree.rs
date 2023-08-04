@@ -12,9 +12,16 @@ pub struct Rectangle {
     pub h: f32,
 }
 
+pub struct Circle {
+    pub x: f32,
+    pub y: f32,
+    pub r: f32,
+    pub r_squared: f32,
+}
+
 pub struct QuadTree {
     boundary: Rectangle,
-    capacity: usize,
+    capacity: u8,
     points: Vec<Point>,
 
     northwest: Option<Box<QuadTree>>,
@@ -24,7 +31,7 @@ pub struct QuadTree {
 }
 
 impl QuadTree {
-    pub fn new(boundary: Rectangle, capacity: usize) -> Self {
+    pub fn new(boundary: Rectangle, capacity: u8) -> Self {
         Self {
             boundary,
             capacity,
@@ -36,10 +43,10 @@ impl QuadTree {
         }
     }
 
-    pub fn query(&self, range: &Rectangle) -> Vec<Point> {
+    pub fn query<T: Shape>(&self, range: &T) -> Vec<Point> {
         let mut res = Vec::new();
 
-        if !self.boundary.intersects(&range) {
+        if !range.intersects(&self.boundary) {
             return res;
         }
 
@@ -111,7 +118,7 @@ impl QuadTree {
             return false;
         }
 
-        if self.points.len() < self.capacity {
+        if self.points.len() < self.capacity as usize {
             self.points.push(point.clone());
             return true;
         }
@@ -143,23 +150,67 @@ impl QuadTree {
     }
 }
 
+pub trait Shape {
+    fn contains(&self, other: &Point) -> bool;
+    fn intersects(&self, other: &Rectangle) -> bool;
+}
+
 impl Rectangle {
     pub fn new(x: f32, y: f32, w: f32, h: f32) -> Self {
         Self { x, y, w, h }
     }
+}
 
-    pub fn contains(&self, other: &Point) -> bool {
+impl Shape for Rectangle {
+    fn contains(&self, other: &Point) -> bool {
         other.x >= self.x - self.w
             && other.x < self.x + self.w
             && other.y >= self.y - self.h
             && other.y < self.y + self.h
     }
 
-    pub fn intersects(&self, other: &Rectangle) -> bool {
+    fn intersects(&self, other: &Rectangle) -> bool {
         !(other.x - other.w > self.x + self.w
             || other.x + other.w < self.x - self.w
             || other.y - other.h > self.y + self.h
             || other.y + other.h < self.y - self.h)
+    }
+}
+
+impl Circle {
+    pub fn new(x: f32, y: f32, r: f32) -> Self {
+        let r_squared = r * r;
+        Self { x, y, r, r_squared }
+    }
+}
+
+impl Shape for Circle {
+    //Checks if a point is contained in this circle
+    fn contains(&self, other: &Point) -> bool {
+        (other.x - self.x) * (other.x - self.x) + (other.y - self.y) * (other.y - self.y)
+            < self.r_squared
+    }
+
+    //Checks if a Quadtree boundary intersects with this circle
+    fn intersects(&self, other: &Rectangle) -> bool {
+        let x_dist = (other.x - self.x).abs();
+        let y_dist = (other.y - self.y).abs();
+
+        let edges =
+            ((x_dist - other.w) * (x_dist - other.w)) + ((y_dist - other.h) * (y_dist - other.h));
+
+        // no intersection
+        if x_dist > (self.r + other.w) || y_dist > (self.r + other.h) {
+            return false;
+        }
+
+        // intersection with the circle
+        if x_dist <= other.w || y_dist <= other.h {
+            return true;
+        }
+
+        // intersection on the edge of the circle
+        return edges <= self.r_squared;
     }
 }
 
