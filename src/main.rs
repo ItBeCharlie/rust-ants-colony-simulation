@@ -34,8 +34,8 @@ fn main() {
                 }),
         )
         // External plugins & systems
-        .add_plugins(LogDiagnosticsPlugin::default())
-        .add_plugins(FrameTimeDiagnosticsPlugin::default())
+        // .add_plugins(LogDiagnosticsPlugin::default())
+        // .add_plugins(FrameTimeDiagnosticsPlugin::default())
         .add_systems(Update, bevy::window::close_on_esc)
         .add_plugins(PanCamPlugin::default())
         // Default Resources

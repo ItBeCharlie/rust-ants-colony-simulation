@@ -1,4 +1,7 @@
-use std::{f32::consts::PI, time::Duration};
+use std::{
+    f32::consts::{PI, TAU},
+    time::Duration,
+};
 
 use bevy::{
     math::{vec2, vec3},
@@ -23,7 +26,7 @@ pub enum AntTask {
 pub struct Ant;
 #[derive(Component)]
 struct CurrentTask(AntTask);
-#[derive(Component)]
+#[derive(Component, Debug)]
 struct Velocity(Vec2);
 #[derive(Component)]
 struct Acceleration(Vec2);
@@ -191,7 +194,39 @@ fn periodic_direction_update(
             }
         }
 
-        let points = surrounding_ph.unwrap();
+        // println!("{:?}", current_pos);
+        // println!("{:?}", velocity.0);
+        // println!("{:?}", angle);
+
+        let mut points = surrounding_ph.unwrap();
+        if points.is_empty() {
+            // Default direction randomization
+            acceleration.0 += get_rand_unit_vec2() * 0.2;
+            continue;
+        }
+
+        // Angle in radians counterclockwise from 0 to 6.28. 0 degrees is facing right
+        let mut angle = velocity.0.y.atan2(velocity.0.x);
+        if angle < 0.0 {
+            angle += TAU;
+        }
+
+        // Trim points outside vision cone
+        points.retain(|point| {
+            let rel_x = point.0 as f32 - current_pos.x;
+            let rel_y = point.1 as f32 - current_pos.y;
+
+            let mut point_angle = rel_y.atan2(rel_x);
+            if point_angle < 0.0 {
+                point_angle += TAU;
+            }
+
+            point_angle - angle - (ANT_VISION_CONE / 2.0) <= ANT_VISION_CONE
+                && point_angle - angle + (ANT_VISION_CONE / 2.0) >= 0.0
+        });
+
+        // println!("{}", points.len());
+
         if points.is_empty() {
             // Default direction randomization
             acceleration.0 += get_rand_unit_vec2() * 0.2;

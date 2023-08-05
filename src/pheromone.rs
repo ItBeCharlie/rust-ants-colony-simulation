@@ -248,7 +248,7 @@ impl Pheromones {
 
         let boundary = Rectangle::new(-W / 2.0, H / 2.0, W, H);
 
-        println!("home qt: {:?}", self.qt_home.query(&boundary).len());
-        println!("food qt: {:?}", self.qt_food.query(&boundary).len());
+        // println!("home qt: {:?}", self.qt_home.query(&boundary).len());
+        // println!("food qt: {:?}", self.qt_food.query(&boundary).len());
     }
 }

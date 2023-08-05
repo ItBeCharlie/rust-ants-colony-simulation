@@ -16,10 +16,11 @@ pub const ANT_INITIAL_PH_STRENGTH: f32 = 32.0;
 pub const PH_STRENGTH_DECAY_RATE: f32 = 0.7;
 pub const PH_STRENGTH_DECAY_INTERVAL: f32 = 0.5;
 pub const PH_DROP_INTERVAL: f32 = 0.7;
+pub const ANT_VISION_CONE: f32 = 90.0;
 pub const INITIAL_ANT_PH_SCAN_RADIUS: f32 = 90.0;
 pub const PH_SCAN_RADIUS_INCREMENT: f32 = 0.2;
 pub const PH_SCAN_RADIUS_SCALE: f32 = 1.6;
-pub const ANT_MAX_STEER_ANGLE_DEG: f32 = 60.0;
+pub const ANT_MAX_STEER_ANGLE_DEG: f32 = 20.0;
 pub const ANT_STERRING_FORCE_FACTOR: f32 = 0.5;
 
 // Ant Colony
@@ -29,7 +30,7 @@ pub const HOME_SPRITE_SCALE: f32 = 2.5;
 pub const HOME_RADIUS: f32 = 30.0;
 
 // Pheromones
-pub const MAX_PHEROMONE_STRENGTH: f32 = 500.0;
+pub const MAX_PHEROMONE_STRENGTH: f32 = 300.0;
 pub const PHEROMONE_EXPONENTIAL_DECAY_RATE: f32 = 0.0;
 pub const PHEROMONE_CONSTANT_DECAY_RATE: f32 = 0.08;
 pub const PHEROMONE_DECAY_INTERVAL: f32 = 0.1;
